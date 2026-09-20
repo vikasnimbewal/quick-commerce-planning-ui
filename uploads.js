@@ -24,3 +24,9 @@ $('loadRun').addEventListener('submit',async event=>{
 $('savedRuns').addEventListener('change',()=>{const run=savedRuns.find(r=>r.id===$('savedRuns').value);if(!run)return;activeId=run.id;loadPlanningRun(run);refreshRuns();message('Opened saved run: '+run.name);});
 $('deleteRun').addEventListener('click',()=>{if(!activeId)return;try{persist(savedRuns.filter(r=>r.id!==activeId));activeId=null;loadPlanningRun({rows:[]});refreshRuns();message('Deleted the saved browser copy. Your original CSV files are unchanged.');}catch{message('Could not delete the saved browser copy.',true);}});
 $('clearSession').addEventListener('click',()=>{activeId=null;loadPlanningRun({rows:[]});refreshRuns();$('preparedFile').value='';$('calculatedFile').value='';message('Sheet cleared. Saved runs remain available in this browser.');});
+
+$('toggleUpload').addEventListener('click',()=>{
+ const content=$('uploadContent');content.hidden=!content.hidden;
+ $('toggleUpload').setAttribute('aria-expanded',String(!content.hidden));
+ $('toggleUpload').textContent=content.hidden?'Expand':'Minimize';
+});
