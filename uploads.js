@@ -30,3 +30,12 @@ $('toggleUpload').addEventListener('click',()=>{
  $('toggleUpload').setAttribute('aria-expanded',String(!content.hidden));
  $('toggleUpload').textContent=content.hidden?'Expand':'Minimize';
 });
+
+$('loadBundle').addEventListener('submit',async event=>{
+ event.preventDefault();$('loadBundleButton').disabled=true;
+ try{const file=$('bundleFile').files[0];if(!file)throw Error('Choose a run bundle.');if(file.size>20*1024*1024)throw Error('Run bundle must be 20 MB or smaller.');
+ const run=parseRunBundle(await file.text());run.id=crypto.randomUUID();run.name=$('runName').value.trim()||run.rows[0].plan_version_id+' / '+run.operationalSnapshot;
+ activeId=null;let warning='';if($('rememberRun').checked){try{persist([...savedRuns,run]);activeId=run.id}catch{warning=' Could not save; loaded for this session only.'}}
+ loadPlanningRun(run);refreshRuns();message((run.blocked?'Execution build blocked. Open diagnostics.':'Loaded plan, commitments and actuals for '+run.operationalSnapshot+'.')+warning);$('bundleFile').value='';
+ }catch(error){message(error.message,true)}finally{$('loadBundleButton').disabled=false}
+});
